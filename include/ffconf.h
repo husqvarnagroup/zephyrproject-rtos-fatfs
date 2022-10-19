@@ -323,10 +323,16 @@
 /      lock control is independent of re-entrancy. */
 
 
-/* #include <somertos.h>	// O/S definitions */
+#if defined(CONFIG_FS_FATFS_REENTRANT) && CONFIG_FS_FATFS_REENTRANT
+#include <zephyr/kernel.h>
+#define FF_FS_REENTRANT		CONFIG_FS_FATFS_REENTRANT
+#define FF_FS_TIMEOUT		K_FOREVER
+#define FF_SYNC_t			struct k_mutex*
+#else
 #define FF_FS_REENTRANT	0
 #define FF_FS_TIMEOUT	1000
 #define FF_SYNC_t		HANDLE
+#endif
 /* The option FF_FS_REENTRANT switches the re-entrancy (thread safe) of the FatFs
 /  module itself. Note that regardless of this option, file access to different
 /  volume is always re-entrant and volume control functions, f_mount(), f_mkfs()
